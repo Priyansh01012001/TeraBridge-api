@@ -185,6 +185,17 @@ async def refresh_account_tokens():
             lower = html.lower()
             host = response.url.host or base
 
+            # Safe diagnostics only: never log cookies, tokens, or page contents.
+            logger.info(
+                "TeraBox diagnostic: status=%s final_host=%s content_type=%s "
+                "body_length=%s redirected=%s",
+                response.status_code,
+                host,
+                response.headers.get("content-type", "unknown"),
+                len(html),
+                response.url.path != "/main",
+            )
+
             if any(marker in lower for marker in (
                 "captcha", "verify you are human", "security verification",
                 "cf-chl-", "challenge-platform", "访问过于频繁",
